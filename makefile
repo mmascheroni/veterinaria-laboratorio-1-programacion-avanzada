@@ -1,9 +1,8 @@
 # Definición de variables
 CXX := g++
-
 CXXFLAGS := -Wall -std=c++11
 
-OBJFILES := main.o Consulta.o DtConsulta.o DtFecha.o DtGato.o DtPerro.o Dtmascota.o gato.o mascota.o perro.o socio.o
+OBJFILES := main.o Consulta.o DtConsulta.o DtFecha.o DtGato.o DtPerro.o DtMascota.o Gato.o Mascota.o Perro.o Socio.o
 
 TARGET := programa
 
@@ -11,4 +10,6 @@ TARGET := programa
 $(TARGET): $(OBJFILES)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJFILES)
 
-# Reglas
+# Regla para limpiar archivos compilados
+clean:
+	rm -f $(OBJFILES) $(TARGET)

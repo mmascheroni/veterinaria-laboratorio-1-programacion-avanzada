@@ -9,6 +9,8 @@ class Mascota {
     private:
         std::string nombre;
         Genero genero;
+        
+    protected:
         float peso;
 
     public:
@@ -36,6 +38,7 @@ class Mascota {
         virtual float obtenerRacionDiaria();
 
         // Destructor
+        virtual ~Mascota();
 };
 
 #endif

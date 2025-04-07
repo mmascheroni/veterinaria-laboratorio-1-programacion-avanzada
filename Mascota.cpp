@@ -46,8 +46,9 @@ void Mascota::setPeso(float peso) {
 }
 
 // Metodos
-float obtenerRacionDiaria() {
+float Mascota::obtenerRacionDiaria() {
     return 0.0;
 }
 
 // Destructor
+Mascota::~Mascota(){}

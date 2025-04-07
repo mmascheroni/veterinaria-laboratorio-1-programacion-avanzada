@@ -8,6 +8,11 @@
 #include "DtConsulta.h"
 #include "Mascota.h"
 #include "Socio.h"
+#include "Perro.h"  
+#include "Gato.h"     
+#include "RazaPerro.h" 
+#include "DtPerro.h"  
+#include "DtGato.h" 
 
 using namespace std;
 
@@ -17,7 +22,7 @@ string solicitarCI();
 
 string solicitarNombre();
 
-DtFecha solicitarFechaIngreso();
+DtFecha solicitarFecha();
 
 Genero solicitarGenero();
 
@@ -25,7 +30,7 @@ float solicitarPeso();
 
 float solicitarRacionDiaria();
 
-void registrarSocio(string ci, string nombre, DtFecha*
+Socio* registrarSocio(string ci, string nombre, DtFecha*
 fechaIngreso, DtMascota* dtMascota);
 
 void agregarMascota(string ci, DtMascota dtMascota);
@@ -40,23 +45,51 @@ void eliminarSocio(string ci);
 
 DtMascota obtenerMascotas(string ci, int& cantMascotas);
 
+void mostrarSocios(Socio* socios[], int cantidad);
+
 
 int main(){
-    printf("hola mundo");
+    menuBienvenida();
     return 0;
 }
 
-void registrarSocio(string ci, string nombre, DtFecha*
+Socio* registrarSocio(string ci, string nombre, DtFecha*
 fechaIngreso, DtMascota* dtMascota) {
+    int opcionMascota;
+    Socio* socio;
     Mascota* mascota = new Mascota(dtMascota->getNombre(), dtMascota->getGenero(),dtMascota->getPeso());
 
-    Socio* socio = new Socio(ci, nombre, *fechaIngreso, mascota);
+    while (opcionMascota != 1 && opcionMascota != 2) {
+        cout << "Ingrese por favor el tipo de mascota: " << endl;
+        cout << "1) Perro " << endl;
+        cout << "2) Gato " << endl;
+        cin >> opcionMascota;
+    }
+
+    if ( opcionMascota == 1 ) {
+        
+        bool vacunaCachorro = true;
+        DtPerro* dtPerro = new DtPerro(dtMascota->getNombre(), dtMascota->getGenero(), dtMascota->getPeso(), dtMascota->getRacionDiaria(), raza, vacunaCachorro);
+        Perro* perro = new Perro(dtPerro->getNombre(), dtPerro->getGenero(), dtPerro->getPeso(), dtPerro->getRaza(), dtPerro->getVacunaCachorro());
+
+        socio = new Socio(ci, nombre, *fechaIngreso, perro);
+    } else {
+        TipoPelo tipoPelo = CORTO;
+        DtGato* dtGato = new DtGato(dtMascota->getNombre(), dtMascota->getGenero(), dtMascota->getPeso(), dtMascota->getRacionDiaria(), tipoPelo);
+        Gato* gato = new Gato(dtGato->getNombre(), dtGato->getGenero(), dtGato->getPeso(), dtGato->getTipoPelo());
+
+        socio = new Socio(ci, nombre, *fechaIngreso, gato);
+    }
+
+
+    return socio;
 }
 
 
 
 void menuBienvenida() {
-    int opcion = 0;
+    int opcion, posicionSocios = 0;
+    Socio* socios[20];
 
     while ( opcion != 0 ) {
         printf("Bienvenido!\n");
@@ -66,32 +99,37 @@ void menuBienvenida() {
         printf("1) Registrar Socio\n");
         printf("2) Agregar Mascota\n");
         printf("3) Ingresar Consulta\n\n");
+        printf("4) Mostrar Socios Registados\n");
         printf("...\n");
         printf("0) Salir\n");
         printf("Opcion: ");
         scanf(" %d", &opcion);
 
         switch (opcion) {
-            case 1:
+            case 1: {
                 printf("Función registrarSocio implementada:\n");
 
+                printf("DATOS DEL SOCIO: \n\n");
                 // Socio
                 string ci = solicitarCI();
                 string nombre = solicitarNombre();
                 DtFecha fechaTemp = solicitarFecha();
                 DtFecha* fechaIngreso = new DtFecha(fechaTemp);
 
+                printf("DATOS DE LA MASCOTA: \n");
                 // DtMascota
                 string nombreMascota = solicitarNombre();
                 Genero genero = solicitarGenero();
                 float peso = solicitarPeso();
                 float racionDiaria = solicitarRacionDiaria();
 
-                DtMascota* dtMascota = new DtMascota(nombreMascota, genero, peso, racionDiaria;)
+                DtMascota* dtMascota = new DtMascota(nombreMascota, genero, peso, racionDiaria);
 
-                registrarSocio(ci, nombre, fechaIngreso, dtMascota);
+                socios[0] = registrarSocio(ci, nombre, fechaIngreso, dtMascota);
+                posicionSocios += 1;
 
                 break;
+            }
             case 2:
                 printf("Función agregarMascota aún no implementada.\n");
                 break;
@@ -99,13 +137,8 @@ void menuBienvenida() {
                 printf("Función ingresarConsulta aún no implementada.\n");
                 break;
             case 4:
-                printf("Función verConsultasAntesDeFecha aún no implementada.\n");
-                break;
-            case 5:
-                printf("Función eliminarSocio aún no implementada.\n");
-                break;
-            case 6:
-                printf("Función obtenerMascotas aún no implementada.\n");
+                printf("Función mostrarSocios.\n");
+                mostrarSocios(socios, posicionSocios);
                 break;
             case 0:
                 printf("Saliendo...\n");
@@ -125,7 +158,6 @@ string solicitarCI() {
     cout << "Ingrese por favor el CI: ";
     cin >> ci;
 
-    return ci;
 
     return ci;
 }
@@ -134,7 +166,7 @@ string solicitarCI() {
 string solicitarNombre() {
     string nombre;
 
-    cout << "Ingrese por favor el Cnombre: ";
+    cout << "Ingrese por favor el nombre: ";
     cin >> nombre;
 
     return nombre;
@@ -173,7 +205,11 @@ Genero solicitarGenero() {
         }
     }
 
-    return static_cast<Genero>(genero);
+    if (genero == 1) {
+        return MACHO;
+    } else {
+        return HEMBRA;
+    }
 }
 
 float solicitarPeso() {
@@ -193,3 +229,47 @@ float solicitarRacionDiaria() {
 
     return racionDiaria;
 }
+
+void mostrarSocios(Socio* socios[], int cantidad) {
+    cout << "\n----- Lista de Socios -----\n";
+
+    for (int i = 0; i < cantidad; i++) {
+        if (socios[i] != nullptr) {
+            cout << "Socio " << (i + 1) << ":\n";
+            cout << "  CI: " << socios[i]->getCi() << "\n";
+            cout << "  Nombre: " << socios[i]->getNombre() << "\n";
+
+            DtFecha fecha = socios[i]->getFechaIngreso();
+            cout << "  Fecha de ingreso: " << fecha.getDia() << "/" 
+                 << fecha.getMes() << "/" << fecha.getAnio() << "\n";
+            
+            // Acceder a la mascota del socio
+            Mascota* mascota = socios[i]->getMascota();
+            if (mascota != nullptr) {
+                cout << "  Mascota:\n";
+                cout << "    Nombre: " << mascota->getNombre() << "\n";
+                cout << "    Género: " << (mascota->getGenero() == MACHO ? "Macho" : "Hembra") << "\n";
+                cout << "    Peso: " << mascota->getPeso() << " kg\n";
+
+                // Aquí también puedes agregar más detalles según el tipo de mascota (Perro o Gato)
+                if (dynamic_cast<Perro*>(mascota)) {
+                    Perro* perro = dynamic_cast<Perro*>(mascota);
+                    cout << "    Tipo: Perro\n";
+                    cout << "    Raza: " << (perro->getRaza() == RazaPerro::OTRO ? "Otro" : "Específica") << "\n";
+                    cout << "    Vacuna Cachorro: " << (perro->getVacunaCachorro() ? "Sí" : "No") << "\n";
+                    // Agregar más detalles específicos del Perro si es necesario
+                } else if (dynamic_cast<Gato*>(mascota)) {
+                    Gato* gato = dynamic_cast<Gato*>(mascota);
+                    cout << "    Tipo: Gato\n";
+                    cout << "    Tipo de pelo: " << gato->getTipoPelo() << "\n";
+                    // Agregar más detalles específicos del Gato si es necesario
+                }
+            } else {
+                cout << "  No tiene mascota registrada.\n";
+            }
+
+            cout << "-----------------------------\n";
+        }
+    }
+}
+
