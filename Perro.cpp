@@ -5,8 +5,8 @@
 Perro::Perro() : Mascota(), raza(RazaPerro::OTRO), vacunaCachorro(false) {}
 
 /* Comun */
-Perro::Perro(std::string nombre, Genero genero, float peso, RazaPerro raza, bool vacuna)
-    : Mascota(nombre, genero, peso), raza(raza), vacunaCachorro(vacuna) {}
+Perro::Perro(std::string nombre, Genero genero, float peso, RazaPerro raza, bool vacunaCachorro)
+    : Mascota(nombre, genero, peso), raza(raza), vacunaCachorro(vacunaCachorro) {}
 
 /* Por Copia */
 Perro::Perro(const Perro& perro)
@@ -29,5 +29,5 @@ void Perro::setVacunaCachorro(bool vacunaCachorro) {
 }
 
 float Perro::obtenerRacionDiaria() {
-    return 0.0;
+    return 0.025 * peso;
 }

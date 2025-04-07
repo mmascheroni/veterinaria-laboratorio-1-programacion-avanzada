@@ -26,7 +26,7 @@ DtMascota::DtMascota(const DtMascota& dtMascota) {
 }
 
 
-/ Getters
+// Getters
 std::string DtMascota::DtMascota::getNombre() const {
     return this->nombre;
 }

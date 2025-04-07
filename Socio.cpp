@@ -72,7 +72,6 @@ Socio::Socio(const Socio& socio) {
 }
 
 
-
 // Getters
 std::string Socio::getCi() const {
     return this->ci;

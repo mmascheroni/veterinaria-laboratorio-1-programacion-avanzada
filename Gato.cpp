@@ -24,6 +24,6 @@ void Gato::setTipoPelo(TipoPelo tipoPelo) {
 
 // Metodos
 float Gato::obtenerRacionDiaria() {
-    return 0.0;
+    return 0.015 * peso;
 }
 // Destructor
