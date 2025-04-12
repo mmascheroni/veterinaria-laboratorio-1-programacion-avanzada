@@ -13,6 +13,7 @@
 #include "RazaPerro.h" 
 #include "DtPerro.h"  
 #include "DtGato.h" 
+#include "TipoPelo.h"
 
 using namespace std;
 
@@ -29,6 +30,12 @@ Genero solicitarGenero();
 float solicitarPeso();
 
 float solicitarRacionDiaria();
+
+RazaPerro solicitarRazaPerro();
+
+bool solicitarVacunaCachorro();
+
+TipoPelo solicitarTipoPelo();
 
 Socio* registrarSocio(string ci, string nombre, DtFecha*
 fechaIngreso, DtMascota* dtMascota);
@@ -52,40 +59,6 @@ int main(){
     menuBienvenida();
     return 0;
 }
-
-Socio* registrarSocio(string ci, string nombre, DtFecha*
-fechaIngreso, DtMascota* dtMascota) {
-    int opcionMascota;
-    Socio* socio;
-    Mascota* mascota = new Mascota(dtMascota->getNombre(), dtMascota->getGenero(),dtMascota->getPeso());
-
-    while (opcionMascota != 1 && opcionMascota != 2) {
-        cout << "Ingrese por favor el tipo de mascota: " << endl;
-        cout << "1) Perro " << endl;
-        cout << "2) Gato " << endl;
-        cin >> opcionMascota;
-    }
-
-    if ( opcionMascota == 1 ) {
-        
-        bool vacunaCachorro = true;
-        DtPerro* dtPerro = new DtPerro(dtMascota->getNombre(), dtMascota->getGenero(), dtMascota->getPeso(), dtMascota->getRacionDiaria(), raza, vacunaCachorro);
-        Perro* perro = new Perro(dtPerro->getNombre(), dtPerro->getGenero(), dtPerro->getPeso(), dtPerro->getRaza(), dtPerro->getVacunaCachorro());
-
-        socio = new Socio(ci, nombre, *fechaIngreso, perro);
-    } else {
-        TipoPelo tipoPelo = CORTO;
-        DtGato* dtGato = new DtGato(dtMascota->getNombre(), dtMascota->getGenero(), dtMascota->getPeso(), dtMascota->getRacionDiaria(), tipoPelo);
-        Gato* gato = new Gato(dtGato->getNombre(), dtGato->getGenero(), dtGato->getPeso(), dtGato->getTipoPelo());
-
-        socio = new Socio(ci, nombre, *fechaIngreso, gato);
-    }
-
-
-    return socio;
-}
-
-
 
 void menuBienvenida() {
     int opcion, posicionSocios = 0;
@@ -125,7 +98,7 @@ void menuBienvenida() {
 
                 DtMascota* dtMascota = new DtMascota(nombreMascota, genero, peso, racionDiaria);
 
-                socios[0] = registrarSocio(ci, nombre, fechaIngreso, dtMascota);
+                socios[posicionSocios] = registrarSocio(ci, nombre, fechaIngreso, dtMascota);
                 posicionSocios += 1;
 
                 break;
@@ -151,6 +124,45 @@ void menuBienvenida() {
     
 }
 
+Socio* registrarSocio(string ci, string nombre, DtFecha*
+fechaIngreso, DtMascota* dtMascota) {
+    int opcionMascota;
+    Socio* socio;
+
+    // Mascota* mascota = new Mascota(dtMascota->getNombre(), dtMascota->getGenero(),dtMascota->getPeso());
+
+    while (opcionMascota != 1 && opcionMascota != 2) {
+        cout << "Ingrese por favor el tipo de mascota: " << endl;
+        cout << "1) Perro " << endl;
+        cout << "2) Gato " << endl;
+        cout << "Escoga el numero de la opcion deseada: " << endl;
+        cin >> opcionMascota;
+    }
+
+    if ( opcionMascota == 1 ) {
+        RazaPerro raza = solicitarRazaPerro();
+        bool vacunaCachorro = solicitarVacunaCachorro();
+
+        DtPerro* dtPerro = new DtPerro(dtMascota->getNombre(), dtMascota->getGenero(), dtMascota->getPeso(), dtMascota->getRacionDiaria(), raza, vacunaCachorro);
+
+        Perro* perro = new Perro(dtPerro->getNombre(), dtPerro->getGenero(), dtPerro->getPeso(), dtPerro->getRaza(), dtPerro->getVacunaCachorro());
+
+        socio = new Socio(ci, nombre, *fechaIngreso, perro);
+    } else {
+        TipoPelo tipoPelo = solicitarTipoPelo();
+
+        DtGato* dtGato = new DtGato(dtMascota->getNombre(), dtMascota->getGenero(), dtMascota->getPeso(), dtMascota->getRacionDiaria(), tipoPelo);
+
+        Gato* gato = new Gato(dtGato->getNombre(), dtGato->getGenero(), dtGato->getPeso(), dtGato->getTipoPelo());
+
+        socio = new Socio(ci, nombre, *fechaIngreso, gato);
+    }
+
+
+    return socio;
+}
+
+
 
 string solicitarCI() {
     string ci;
@@ -168,8 +180,6 @@ string solicitarNombre() {
 
     cout << "Ingrese por favor el nombre: ";
     cin >> nombre;
-
-    return nombre;
 
     return nombre;
 }
@@ -230,6 +240,93 @@ float solicitarRacionDiaria() {
     return racionDiaria;
 }
 
+
+RazaPerro solicitarRazaPerro() {
+    int raza;
+
+    while (raza < 1 || raza > 7) {
+        cout << "Escoga la raza de su perro, por favor: \n";
+        cout << "1 - Labrador\n";
+        cout << "2 - Ovejero\n";
+        cout << "3- Bulldog\n";
+        cout << "4 - Pitbull\n";
+        cout << "5 - Collie\n";
+        cout << "6 - Pekines\n";
+        cout << "7 - Otro\n";
+        cout << "ingrese el numero correspondiente a la raza: ";
+        cin >> raza;
+
+        if (raza < 1 || raza > 7) {
+            cout << "¡Escoga una opción válida por favor!\n";
+        }
+    }
+
+    if (raza == 1) {
+        return RazaPerro::LABRADOR;
+    } else if (raza == 2) {
+        return RazaPerro::OVEJERO;
+    } else if (raza == 3) {
+        return RazaPerro::BULLDOG;
+    } else if (raza == 4) {
+        return RazaPerro::PITBULL;
+    } else if (raza == 5) {
+        return RazaPerro::COLLIE;
+    } else if ( raza == 6 ) {
+        return RazaPerro::PEKINES;
+    } else {
+        return RazaPerro::OTRO;
+    }
+
+}
+
+bool solicitarVacunaCachorro() {
+    int opcion;
+
+    while (opcion < 1 || opcion > 2) {
+        cout << "Su perro tiene la vacuna de cachorro: \n";
+        cout << "1 - Si\n";
+        cout << "2 - No\n";
+        cout << "ingrese el numero correspondiente a la opcion deseada: ";
+        cin >> opcion;
+
+        if (opcion < 1 || opcion > 2) {
+            cout << "¡Escoga una opción válida por favor!\n";
+        }
+    }
+
+    if (opcion == 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+TipoPelo solicitarTipoPelo() {
+    int opcion;
+
+    while (opcion < 1 || opcion > 3) {
+        cout << "Que tipo de pelo tiene su gato: \n";
+        cout << "1 - Corto\n";
+        cout << "2 - Mediano\n";
+        cout << "3 - Largo\n";
+        cout << "ingrese el numero correspondiente a la opcion deseada: ";
+        cin >> opcion;
+
+        if (opcion < 1 || opcion > 3) {
+            cout << "¡Escoga una opción válida por favor!\n";
+        }
+    }
+
+    if (opcion == 1) {
+        return TipoPelo::CORTO;
+    } else if (opcion == 2) {
+        return TipoPelo::MEDIANO;
+    } else {
+        return TipoPelo::LARGO;
+    }
+}
+
+
 void mostrarSocios(Socio* socios[], int cantidad) {
     cout << "\n----- Lista de Socios -----\n";
 
@@ -241,7 +338,7 @@ void mostrarSocios(Socio* socios[], int cantidad) {
 
             DtFecha fecha = socios[i]->getFechaIngreso();
             cout << "  Fecha de ingreso: " << fecha.getDia() << "/" 
-                 << fecha.getMes() << "/" << fecha.getAnio() << "\n";
+                << fecha.getMes() << "/" << fecha.getAnio() << "\n";
             
             // Acceder a la mascota del socio
             Mascota* mascota = socios[i]->getMascota();
@@ -251,18 +348,18 @@ void mostrarSocios(Socio* socios[], int cantidad) {
                 cout << "    Género: " << (mascota->getGenero() == MACHO ? "Macho" : "Hembra") << "\n";
                 cout << "    Peso: " << mascota->getPeso() << " kg\n";
 
-                // Aquí también puedes agregar más detalles según el tipo de mascota (Perro o Gato)
+                
                 if (dynamic_cast<Perro*>(mascota)) {
                     Perro* perro = dynamic_cast<Perro*>(mascota);
                     cout << "    Tipo: Perro\n";
-                    cout << "    Raza: " << (perro->getRaza() == RazaPerro::OTRO ? "Otro" : "Específica") << "\n";
+                    cout << "    Raza: " << (perro->getRaza()) << "\n";
                     cout << "    Vacuna Cachorro: " << (perro->getVacunaCachorro() ? "Sí" : "No") << "\n";
-                    // Agregar más detalles específicos del Perro si es necesario
+                    
                 } else if (dynamic_cast<Gato*>(mascota)) {
                     Gato* gato = dynamic_cast<Gato*>(mascota);
                     cout << "    Tipo: Gato\n";
                     cout << "    Tipo de pelo: " << gato->getTipoPelo() << "\n";
-                    // Agregar más detalles específicos del Gato si es necesario
+                    
                 }
             } else {
                 cout << "  No tiene mascota registrada.\n";
